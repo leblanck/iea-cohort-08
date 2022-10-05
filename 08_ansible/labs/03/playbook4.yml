@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  vars:
+    first_name: james
+    last_name: bond
+    file_path: "/tmp/random_number"
+    nums:
+      - 3
+      - 4
+      - 18
+      - 1
+      - 30
+  tasks:
+    - name: write random int to file
+      ansible.builtin.lineinfile:
+        path: "{{ file_path }}"
+        regexp: '^'
+        line: "{{ 101 | random }}"
+        create: yes
+
+    - name: Low Number pick
+      debug:
+        msg: 'The lowest number is {{ nums | min }}'
+
+    - name: Who are you
+      debug:
+        msg: 'The name is {{ last_name | capitalize }}; {{ first_name | capitalize }} {{ last_name | capitalize }}'
