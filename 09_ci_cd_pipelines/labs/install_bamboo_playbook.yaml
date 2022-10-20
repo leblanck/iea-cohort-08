@@ -1,0 +1,33 @@
+---
+- name: Setup Bamboo Pre-reqs
+  hosts: web
+  tasks:
+  - name: Create Bamboo User
+    user:
+      name: bamboo
+      comment: "Bamboo Role Account"
+
+  - name: Create Home Dir
+    file:
+      path: /var/bamboo/bamboo-home
+      state: directory
+      owner: bamboo
+
+  - name: Create Working Dir
+    file:
+      path: /opt/atlassian/bamboo
+      state: directory
+      owner: bamboo
+
+  - name: Download and Extract Installer
+    unarchive:
+      src: https://www.atlassian.com/software/bamboo/downloads/binary/atlassian-bamboo-9.0.1.tar.gz
+      dest: /tmp/
+      remote_src: yes
+
+# - name: Configure Bamboo
+#   hosts: web
+#   tasks: 
+# - name: Start Bamboo
+#   hosts: web
+#   tasks: 

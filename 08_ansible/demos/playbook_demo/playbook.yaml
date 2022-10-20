@@ -13,14 +13,6 @@
     - name: Show the output of the cat
       debug:
         var: motd.stdout
-    - name: Greet everyone
-      debug:
-        msg: "Hello there {{ item }}"
-      loop:
-        - JR
-        - Brock
-        - Nick
-        - Curtis
   handlers:
     - name: inform change
       debug:
