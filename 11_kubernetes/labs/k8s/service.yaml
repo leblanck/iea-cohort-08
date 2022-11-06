@@ -1,0 +1,13 @@
+kind: Service                                                                                                                                                   
+apiVersion: v1
+metadata:
+   name: http-service
+spec:
+  type: LoadBalancer
+  sessionAffinity: ClientIP
+  selector:
+      app: http
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
