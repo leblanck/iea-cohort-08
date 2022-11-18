@@ -1,0 +1,75 @@
+---
+- name: Setup mysql
+  hosts: db
+  vars_files:
+    - group_vars/db.yml
+  tasks:
+    - name: Install dependencies
+      apt:
+        name:
+        - mysql-server
+        - mysql-client
+    - name: Allow all hosts to connect
+      shell: 'sed -i "s/.*bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf'
+
+    - name: Start the mysql Service
+      service:
+        name: mysql
+        state: restarted
+
+    - name: Create database
+      mysql_db:
+        name: "{{ db_name }}"
+        state: present
+
+    - name: Create database users
+      mysql_user:
+        name: "{{ db_user }}"
+        host: "%"
+        password: "{{ db_password }}"
+        priv: '*.*:ALL,GRANT'
+        state: present
+
+- name: Setup guestbook application
+  hosts: web
+  vars_files:
+    - group_vars/db.yml
+  tasks:
+    - name: Install dependencies
+      apt:
+        name:
+        - python3
+        - python3-setuptools
+        - python3-dev
+        - build-essential
+        - python3-pip
+        - python3-mysqldb
+
+    - name: Install flask
+      pip:
+        name:
+        - configparser
+        - flask
+        - flask-sqlalchemy
+
+    - name: Download guestbook source code
+      git:
+        repo: https://github.com/jrrickerson/flask-guestbook 
+        dest: /opt/flask-guestbook
+    - name: Check if application is running
+      shell: "ps -ef |grep -v grep | grep -w flask |awk '{print $2}'"
+      register: process_id
+      changed_when: process_id.stdout != ""
+    - name: Stop the application
+      shell: "kill {{ process_id.stdout }}"
+      when: process_id.stdout != ""
+    - name: Create guestbook config file
+      file:
+        path: "/opt/guestbook"
+        state: directory
+    - name: Configure application
+      template:
+        src: "vars.ini.j2"
+        dest: "/opt/guestbook/vars.ini"
+    - name: Start the application
+      shell: "FLASK_APP=/opt/flask-guestbook/app.py nohup flask run -h 0.0.0.0 -p 8080 &"
