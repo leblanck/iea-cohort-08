@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  vars:
+    file_path: "/tmp/random_number"
+  tasks:
+    - name: write random int to file
+      ansible.builtin.lineinfile:
+        path: "{{ file_path }}"
+        regexp: '^'
+        line: "{{ 101 | random }}"
+        create: yes

@@ -1,9 +1,0 @@
----
-- hosts: localhost
-  vars:
-    first_name: james
-    last_name: bond
-  tasks:
-  - debug:
-      msg: 'The name is {{ last_name | capitalize }}; {{ first_name | capitalize }} {{ last_name | capitalize }}'
-

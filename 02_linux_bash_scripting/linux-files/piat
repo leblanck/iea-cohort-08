@@ -1,6 +1,0 @@
-tr A-Z a-z |
-tr -sc a-z '\n' |
-sort |
-uniq -c |
-sort -n |
-tail
